@@ -1,0 +1,46 @@
+[
+  {
+    "name": "Nabeel",
+    "final_balance": 3750,
+    "highest_balance": 1000,
+    "games_played": 5,
+    "games_won": 5,
+    "win_rate": 100.0,
+    "blackjacks": 1,
+    "total_winnings": 0,
+    "date": "2025-08-03 11:07:50"
+  },
+  {
+    "name": "nikhil",
+    "final_balance": 1750,
+    "highest_balance": 1000,
+    "games_played": 1,
+    "games_won": 1,
+    "win_rate": 100.0,
+    "blackjacks": 1,
+    "total_winnings": 0,
+    "date": "2025-08-03 11:15:04"
+  },
+  {
+    "name": "Gaurav",
+    "final_balance": 1500,
+    "highest_balance": 1000,
+    "games_played": 1,
+    "games_won": 1,
+    "win_rate": 100.0,
+    "blackjacks": 0,
+    "total_winnings": 0,
+    "date": "2025-08-02 20:17:29"
+  },
+  {
+    "name": "Rohan",
+    "final_balance": 1500,
+    "highest_balance": 1000,
+    "games_played": 1,
+    "games_won": 1,
+    "win_rate": 100.0,
+    "blackjacks": 0,
+    "total_winnings": 0,
+    "date": "2025-08-03 11:35:39"
+  }
+]
