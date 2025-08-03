@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎰 Blackjack Game 🎰</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            min-height: 100vh;
+            color: white;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .game-area {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .main-game {
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .sidebar {
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+            height: fit-content;
+        }
+
+        .hand {
+            margin-bottom: 30px;
+        }
+
+        .hand-title {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .cards {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .card {
+            width: 80px;
+            height: 120px;
+            background: white;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            border: 2px solid #ddd;
+            position: relative;
+        }
+
+        .card.hearts, .card.diamonds {
+            color: #e74c3c;
+        }
+
+        .card.clubs, .card.spades {
+            color: #2c3e50;
+        }
+
+        .card.hidden {
+            background: linear-gradient(45deg, #2c3e50, #34495e);
+            color: white;
+            font-size: 1rem;
+        }
+
+        .hand-value {
+            text-align: center;
+            font-size: 1.2rem;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #27ae60, #2ecc71);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(39, 174, 96, 0.4);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(45deg, #e74c3c, #c0392b);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(231, 76, 60, 0.4);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .stats {
+            margin-bottom: 20px;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .stat-label {
+            font-weight: bold;
+        }
+
+        .stat-value {
+            color: #f39c12;
+        }
+
+        .betting-area {
+            margin-bottom: 20px;
+        }
+
+        .bet-input {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            font-size: 1rem;
+        }
+
+        .message {
+            text-align: center;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .message.success {
+            background: rgba(39, 174, 96, 0.3);
+            border: 1px solid #27ae60;
+        }
+
+        .message.error {
+            background: rgba(231, 76, 60, 0.3);
+            border: 1px solid #e74c3c;
+        }
+
+        .message.info {
+            background: rgba(52, 152, 219, 0.3);
+            border: 1px solid #3498db;
+        }
+
+        .leaderboard {
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .leaderboard h3 {
+            text-align: center;
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+        }
+
+        .leaderboard-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .leaderboard-table th,
+        .leaderboard-table td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .leaderboard-table th {
+            background: rgba(255,255,255,0.1);
+            font-weight: bold;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        @media (max-width: 768px) {
+            .game-area {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .cards {
+                gap: 5px;
+            }
+            
+            .card {
+                width: 60px;
+                height: 90px;
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎰 Blackjack Game 🎰</h1>
+            <p>Beat the dealer to 21!</p>
+        </div>
+
+        <!-- Welcome Screen -->
+        <div id="welcome-screen" class="main-game">
+            <h2 style="text-align: center; margin-bottom: 30px;">Welcome to Blackjack!</h2>
+            <div style="text-align: center;">
+                <input type="text" id="player-name" placeholder="Enter your name" class="bet-input" style="max-width: 300px;">
+                <br><br>
+                <button class="btn btn-primary" onclick="startGame()">Start Game</button>
+            </div>
+        </div>
+
+        <!-- Game Screen -->
+        <div id="game-screen" class="hidden">
+            <div class="game-area">
+                <div class="main-game">
+                    <div class="hand">
+                        <div class="hand-title">Dealer's Hand</div>
+                        <div id="dealer-cards" class="cards"></div>
+                        <div id="dealer-value" class="hand-value"></div>
+                    </div>
+
+                    <div class="hand">
+                        <div class="hand-title">Your Hand</div>
+                        <div id="player-cards" class="cards"></div>
+                        <div id="player-value" class="hand-value"></div>
+                    </div>
+
+                    <div id="game-message" class="message hidden"></div>
+
+                    <div class="controls">
+                        <button id="hit-btn" class="btn btn-primary" onclick="hit()" disabled>Hit</button>
+                        <button id="stand-btn" class="btn btn-secondary" onclick="stand()" disabled>Stand</button>
+                        <button id="new-game-btn" class="btn btn-primary" onclick="newGame()" style="display: none;">New Game</button>
+                    </div>
+                </div>
+
+                <div class="sidebar">
+                    <div class="stats">
+                        <h3>Statistics</h3>
+                        <div class="stat-item">
+                            <span class="stat-label">Balance:</span>
+                            <span id="balance" class="stat-value">$1000</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Games Played:</span>
+                            <span id="games-played" class="stat-value">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Win Rate:</span>
+                            <span id="win-rate" class="stat-value">0%</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Blackjacks:</span>
+                            <span id="blackjacks" class="stat-value">0</span>
+                        </div>
+                    </div>
+
+                    <div class="betting-area">
+                        <h3>Place Your Bet</h3>
+                        <input type="number" id="bet-amount" placeholder="Bet amount ($10-$500)" class="bet-input" min="10" max="500">
+                        <button class="btn btn-primary" onclick="placeBet()" style="width: 100%;">Place Bet</button>
+                    </div>
+
+                                         <div style="margin-top: 20px;">
+                         <button class="btn btn-secondary" onclick="showLeaderboard()" style="width: 100%;">View Leaderboard</button>
+                     </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Leaderboard Modal -->
+        <div id="leaderboard-modal" class="hidden" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center; z-index: 1000;">
+            <div class="leaderboard" style="max-width: 600px; max-height: 80vh; overflow-y: auto;">
+                <h3>🏆 Leaderboard 🏆</h3>
+                <table class="leaderboard-table">
+                    <thead>
+                        <tr>
+                            <th>Rank</th>
+                            <th>Name</th>
+                            <th>Final Balance</th>
+                            <th>Win Rate</th>
+                            <th>Games</th>
+                            <th>Blackjacks</th>
+                        </tr>
+                    </thead>
+                    <tbody id="leaderboard-body">
+                    </tbody>
+                </table>
+                <div style="display: flex; gap: 10px; margin-top: 15px;">
+                    <button class="btn btn-secondary" onclick="showLeaderboard()" style="flex: 1;">Refresh</button>
+                    <button class="btn btn-primary" onclick="hideLeaderboard()" style="flex: 1;">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let gameActive = false;
+
+        function startGame() {
+            const playerName = document.getElementById('player-name').value.trim();
+            if (!playerName) {
+                alert('Please enter your name');
+                return;
+            }
+
+            fetch('/start_game', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ player_name: playerName })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    document.getElementById('welcome-screen').classList.add('hidden');
+                    document.getElementById('game-screen').classList.remove('hidden');
+                    updateStats();
+                }
+            });
+        }
+
+        function placeBet() {
+            const betAmount = parseInt(document.getElementById('bet-amount').value);
+            
+            // Clear any existing messages when placing a new bet
+            document.getElementById('game-message').classList.add('hidden');
+            
+            fetch('/place_bet', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ bet_amount: betAmount })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    displayCards(data.player_hand, 'player-cards');
+                    displayCards(data.dealer_hand, 'dealer-cards');
+                    document.getElementById('player-value').textContent = `Value: ${data.player_value}`;
+                    document.getElementById('dealer-value').textContent = data.dealer_value === '?' ? 'Value: ?' : `Value: ${data.dealer_value}`;
+                    
+                    if (data.game_message) {
+                        showMessage(data.game_message, 'info');
+                                                 if (data.game_message.includes('BLACKJACK') || data.game_message.includes('tie')) {
+                             // Game ended with blackjack - show dealer's full hand
+                             displayCards(data.dealer_hand, 'dealer-cards', true);
+                             document.getElementById('dealer-value').textContent = `Value: ${data.dealer_value}`;
+                             
+                             setTimeout(() => {
+                                 document.getElementById('new-game-btn').style.display = 'inline-block';
+                                 // Keep hit and stand buttons enabled even after blackjack
+                                 document.getElementById('hit-btn').disabled = false;
+                                 document.getElementById('stand-btn').disabled = false;
+                                 gameActive = true; // Keep game active
+                                 
+                                 // Auto-save score when blackjack game ends
+                                 autoSaveScore();
+                             }, 2000);
+                         }
+                    } else {
+                        document.getElementById('hit-btn').disabled = false;
+                        document.getElementById('stand-btn').disabled = false;
+                        gameActive = true;
+                    }
+                    
+                    updateStats();
+                } else {
+                    showMessage(data.message, 'error');
+                }
+            });
+        }
+
+        function hit() {
+            fetch('/hit', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'continue') {
+                    displayCards(data.player_hand, 'player-cards');
+                    document.getElementById('player-value').textContent = `Value: ${data.player_value}`;
+                    
+                    if (!data.can_hit) {
+                        document.getElementById('hit-btn').disabled = true;
+                    }
+                } else if (data.status === 'game_over') {
+                    displayCards(data.player_hand, 'player-cards');
+                    displayCards(data.dealer_hand, 'dealer-cards', true);
+                    document.getElementById('player-value').textContent = `Value: ${data.player_value}`;
+                    document.getElementById('dealer-value').textContent = `Value: ${data.dealer_value}`;
+                    
+                    showMessage(data.message, data.result === 'win' ? 'success' : 'error');
+                    
+                    document.getElementById('hit-btn').disabled = true;
+                    document.getElementById('stand-btn').disabled = true;
+                    document.getElementById('new-game-btn').style.display = 'inline-block';
+                    
+                    gameActive = false;
+                    updateStats();
+                    
+                    // Auto-save score when game ends
+                    setTimeout(() => {
+                        autoSaveScore();
+                    }, 1000);
+                }
+            });
+        }
+
+        function stand() {
+            fetch('/stand', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'game_over') {
+                    displayCards(data.player_hand, 'player-cards');
+                    displayCards(data.dealer_hand, 'dealer-cards', true);
+                    document.getElementById('player-value').textContent = `Value: ${data.player_value}`;
+                    document.getElementById('dealer-value').textContent = `Value: ${data.dealer_value}`;
+                    
+                    showMessage(data.message, data.result === 'win' ? 'success' : 'error');
+                    
+                    document.getElementById('hit-btn').disabled = true;
+                    document.getElementById('stand-btn').disabled = true;
+                    document.getElementById('new-game-btn').style.display = 'inline-block';
+                    
+                    gameActive = false;
+                    updateStats();
+                    
+                    // Auto-save score when game ends
+                    setTimeout(() => {
+                        autoSaveScore();
+                    }, 1000);
+                }
+            });
+        }
+
+        function newGame() {
+            // Get current player name from stats
+            fetch('/get_stats')
+            .then(response => response.json())
+            .then(stats => {
+                // Call backend to reset session data
+                return fetch('/start_game', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ player_name: stats.player_name })
+                });
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    // Clear UI
+                    document.getElementById('bet-amount').value = '';
+                    document.getElementById('player-cards').innerHTML = '';
+                    document.getElementById('dealer-cards').innerHTML = '';
+                    document.getElementById('player-value').textContent = '';
+                    document.getElementById('dealer-value').textContent = '';
+                    document.getElementById('game-message').classList.add('hidden');
+                    document.getElementById('hit-btn').disabled = true;
+                    document.getElementById('stand-btn').disabled = true;
+                    document.getElementById('new-game-btn').style.display = 'none';
+                    gameActive = false;
+                    
+                    // Update stats to show reset values
+                    updateStats();
+                    
+                    showMessage('New game started! Place your bet.', 'info');
+                }
+            })
+            .catch(error => {
+                console.error('Error starting new game:', error);
+                showMessage('Error starting new game. Please try again.', 'error');
+            });
+        }
+
+        function displayCards(cards, containerId, showAll = false) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = '';
+            
+            cards.forEach(card => {
+                const cardElement = document.createElement('div');
+                cardElement.className = `card ${card.suit}`;
+                
+                if (card.suit === 'hidden') {
+                    cardElement.classList.add('hidden');
+                    cardElement.textContent = '🂠';
+                } else {
+                    cardElement.textContent = card.display;
+                }
+                
+                container.appendChild(cardElement);
+            });
+        }
+
+        function showMessage(message, type) {
+            const messageElement = document.getElementById('game-message');
+            messageElement.textContent = message;
+            messageElement.className = `message ${type}`;
+            messageElement.classList.remove('hidden');
+        }
+
+        function updateStats() {
+            fetch('/get_stats')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('balance').textContent = `$${data.player_money}`;
+                document.getElementById('games-played').textContent = data.games_played;
+                document.getElementById('win-rate').textContent = `${data.win_rate}%`;
+                document.getElementById('blackjacks').textContent = data.blackjacks;
+            });
+        }
+
+        function showLeaderboard() {
+            console.log('Fetching leaderboard...');
+            fetch('/leaderboard', {
+                method: 'GET',
+                headers: {
+                    'Cache-Control': 'no-cache',
+                    'Pragma': 'no-cache'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Leaderboard data:', data);
+                const tbody = document.getElementById('leaderboard-body');
+                tbody.innerHTML = '';
+                
+                if (data.length === 0) {
+                    const row = tbody.insertRow();
+                    row.innerHTML = '<td colspan="6" style="text-align: center;">No players yet. Play some games to see the leaderboard!</td>';
+                } else {
+                    data.forEach((player, index) => {
+                        const row = tbody.insertRow();
+                        row.innerHTML = `
+                            <td>${index + 1}</td>
+                            <td>${player.name}</td>
+                            <td>$${player.final_balance}</td>
+                            <td>${player.win_rate}%</td>
+                            <td>${player.games_played}</td>
+                            <td>${player.blackjacks}</td>
+                        `;
+                    });
+                }
+                
+                const modal = document.getElementById('leaderboard-modal');
+                modal.classList.remove('hidden');
+                modal.style.display = 'flex';
+            })
+            .catch(error => {
+                console.error('Error fetching leaderboard:', error);
+                alert('Error loading leaderboard. Please try again.');
+            });
+        }
+
+        function hideLeaderboard() {
+            console.log('Hiding leaderboard...');
+            const modal = document.getElementById('leaderboard-modal');
+            modal.classList.add('hidden');
+            modal.style.display = 'none';
+        }
+
+
+
+        function autoSaveScore() {
+            console.log('Auto-saving score...');
+            fetch('/save_to_leaderboard', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Auto-save response:', data);
+                // Don't show message or leaderboard for auto-save
+            })
+            .catch(error => {
+                console.error('Error auto-saving to leaderboard:', error);
+            });
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('leaderboard-modal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                hideLeaderboard();
+            }
+        });
+    </script>
+</body>
+</html> 
