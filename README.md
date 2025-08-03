@@ -2,6 +2,8 @@
 
 A comprehensive Blackjack game implementation featuring both command-line and web interfaces, complete with betting system, statistics tracking, and leaderboard functionality.
 
+## 🎮 **[🔴 PLAY LIVE DEMO](https://python-blackjack.onrender.com)** 🎮 - Try it out NOW!
+
 ## 🌟 Features
 
 ### Core Game Features
@@ -113,6 +115,10 @@ python test_blackjack.py
 - **Game Class**: User input validation, game flow
 
 ## 📊 Screenshots
+
+### Web Interface
+![Web Interface](images/Screenshot1.png)
+![Win](images/Screenshot2.png)
 
 ### Command Line Interface
 ```
